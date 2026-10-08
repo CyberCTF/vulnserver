@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://www.isoloom.com/schema/v1.json
+# Vulnserver (by Stephen Bradshaw): a multithreaded Windows TCP server on port 9999 whose
+# commands hide different buffer overflows (stack, SEH, egghunter, restricted characters), for
+# learning exploit development. Source: https://github.com/stephenbradshaw/vulnserver, vendored in
+# vulnserver/. One Windows Server 2019 machine set up by provision/main.yml from a controller
+# Isoloom adds. VM targets only. `isoloom run vagrant`, then `isoloom test vagrant`.
+version: 1
+name: vulnserver
+
+networks:
+  lab: { cidr: 10.60.84.0/24 }
+
+machines:
+  win01:
+    networks: { lab: 10 }
+    services:
+      - { port: 9999, name: vulnserver }
+      - { port: 3389, name: rdp }
+    resources: { cpus: 2, memory_mb: 3072 }
+    vm:
+      os: windows-server-2019
+
+provision:
+  - ansible: provision/main.yml
+    requirements: provision/requirements.yml
+    groups:
+      target: [win01]
+
+checks:
+  - { name: vulnserver answers, tcp: "win01:9999", wait: 300 }
+  - { name: rdp answers, tcp: "win01:3389" }
+  - checks/vulnserver-banner.sh
+
+message: |
+  Vulnserver is listening on {{ machines.win01.addresses.lab }}:9999 (DEP off). Connect with nc
+  and send HELP. To debug your exploits, RDP to the same address as vagrant/vagrant and attach a
+  debugger to vulnserver.exe in C:\vulnserver.

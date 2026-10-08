@@ -1,0 +1,17 @@
+{
+  "title": "Vulnserver",
+  "description": "A Windows TCP server on port 9999 whose commands each hide a different buffer overflow: a plain stack overflow, SEH overwrites, a tiny buffer that needs an egghunter, and restricted character sets. DEP is off, as in the Windows versions the exercises were written for.",
+  "question": "Exploit a Vulnserver command and get a shell on the machine.",
+  "category": "PWN",
+  "difficulty": 3,
+  "evidence_kind": "SECRET",
+  "capabilities": ["buffer-overflow", "seh-overwrite", "egghunter", "exploit-development", "fuzzing"],
+  "providers": [
+    "virtualbox",
+    "vmware_desktop",
+    "parallels",
+    "vmware_esxi",
+    "aws",
+    "azure"
+  ]
+}

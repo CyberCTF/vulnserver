@@ -1,0 +1,49 @@
+# Installs Vulnserver on win01 from the controller, as upstream says to run it: its shipped
+# vulnserver.exe with essfunc.dll next to it, listening on port 9999. Started at every boot by a
+# scheduled task (SYSTEM), port 9999 opened, RDP on for debugging, and DEP turned off
+# (bcdedit nx AlwaysOff) like the Windows versions the exercises were written for.
+- name: Vulnserver
+  hosts: target
+  gather_facts: false
+  tasks:
+    - name: Upstream binaries
+      ansible.windows.win_copy:
+        src: "../vulnserver/{{ item }}"
+        dest: C:\vulnserver\
+      loop: [vulnserver.exe, essfunc.dll]
+
+    - name: Start at boot
+      community.windows.win_scheduled_task:
+        name: vulnserver
+        actions: [{ path: C:\vulnserver\vulnserver.exe, working_directory: C:\vulnserver }]
+        triggers: [{ type: boot }]
+        username: SYSTEM
+        run_level: highest
+        execution_time_limit: PT0S
+        restart_count: 999
+        restart_interval: PT1M
+        state: present
+        enabled: true
+
+    - name: Port 9999
+      community.windows.win_firewall_rule:
+        name: Vulnserver 9999
+        localport: 9999
+        protocol: tcp
+        direction: in
+        action: allow
+        state: present
+        enabled: true
+
+    - name: RDP
+      ansible.windows.win_powershell:
+        script: |
+          Set-ItemProperty 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name fDenyTSConnections -Value 0
+          Enable-NetFirewallRule -DisplayGroup 'Remote Desktop'
+
+    - name: DEP off
+      ansible.windows.win_command: bcdedit /set {current} nx AlwaysOff
+      register: dep
+
+    - name: Reboot (DEP setting, first start of the task)
+      ansible.windows.win_reboot:
