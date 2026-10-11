@@ -3,7 +3,9 @@
   "resolved_version": 1,
   "name": "vulnserver",
   "instance": null,
-  "inputs": [],
+  "inputs": [
+    "CTF_FLAG_MAIN"
+  ],
   "networks": {
     "lab": {
       "cidr": "10.60.84.0/24",
@@ -47,7 +49,9 @@
         }
       ],
       "depends_on": [],
-      "inputs": [],
+      "inputs": [
+        "CTF_FLAG_MAIN"
+      ],
       "volumes": {},
       "resources": {
         "cpus": 2,
@@ -133,5 +137,5 @@
       }
     ]
   },
-  "message": "Vulnserver is listening on 10.60.84.10:9999 (DEP off). Connect with nc\nand send HELP. To debug your exploits, RDP to the same address as vagrant/vagrant and attach a\ndebugger to vulnserver.exe in C:\\vulnserver.\n"
+  "message": "Vulnserver is listening on 10.60.84.10:9999 (DEP off). Connect with nc\nand send HELP. To debug your exploits, RDP to the same address as vagrant/vagrant and attach a\ndebugger to vulnserver.exe in C:\\vulnserver. The flag is in C:\\ctf\\flag.txt, readable by SYSTEM:\nread it through a shell from your exploit.\n"
 }

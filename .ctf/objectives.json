@@ -1,0 +1,42 @@
+{
+  "objectives": [
+    {
+      "key": "main",
+      "title": "Shell from an overflow",
+      "prompt": "Exploit a Vulnserver command to get a shell on the machine (Vulnserver runs as SYSTEM) and read C:\\ctf\\flag.txt. The vagrant RDP login is for debugging only.",
+      "check": { "evidence": "SECRET", "format": "FLAG{%s}" },
+      "dev": "FLAG{dev-vulnserver}",
+      "hints": [
+        "Connect to port 9999 and ask the server which commands it understands.",
+        "Fuzz the commands one at a time with a debugger attached to vulnserver.exe and watch which one crashes and what registers you control.",
+        "essfunc.dll ships next to the binary and is not rebased: a classic place to look for a useful instruction."
+      ],
+      "steps": [
+        {
+          "key": "help",
+          "title": "Talk to the server",
+          "prompt": "Which command makes Vulnserver list the commands it accepts?",
+          "check": { "answer": ["help"] }
+        },
+        {
+          "key": "protection",
+          "title": "Know the target",
+          "prompt": "Which memory protection is turned off on this machine, as on the Windows versions the exercises were written for? (acronym)",
+          "check": { "answer": ["dep", "nx", "data execution prevention"] }
+        },
+        {
+          "key": "trun-class",
+          "title": "The classic bug",
+          "prompt": "The TRUN command is the usual first exercise. What class of vulnerability does it have? (memory region + bug class)",
+          "check": { "answer": ["stack buffer overflow", "stack overflow", "stack-based buffer overflow", "stack based buffer overflow", "buffer overflow"] }
+        },
+        {
+          "key": "gmon-technique",
+          "title": "A different overwrite",
+          "prompt": "Overflowing GMON corrupts something other than the saved return address first. Which Windows structure-based technique does it call for? (acronym)",
+          "check": { "answer": ["seh", "seh overwrite", "structured exception handler", "structured exception handling"] }
+        }
+      ]
+    }
+  ]
+}

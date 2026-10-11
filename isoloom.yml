@@ -7,6 +7,9 @@
 version: 1
 name: vulnserver
 
+# Given by the CyberCTF launcher: this player's flag. Without it the development flag.
+inputs: [CTF_FLAG_MAIN]
+
 networks:
   lab: { cidr: 10.60.84.0/24 }
 
@@ -17,8 +20,11 @@ machines:
       - { port: 9999, name: vulnserver }
       - { port: 3389, name: rdp }
     resources: { cpus: 2, memory_mb: 3072 }
+    inputs: [CTF_FLAG_MAIN]
     vm:
       os: windows-server-2019
+      # The player's flag in C:\ctf\flag.txt (Administrators and SYSTEM only), before the playbook.
+      provision: [provision/flag.ps1]
 
 provision:
   - ansible: provision/main.yml
@@ -34,4 +40,5 @@ checks:
 message: |
   Vulnserver is listening on {{ machines.win01.addresses.lab }}:9999 (DEP off). Connect with nc
   and send HELP. To debug your exploits, RDP to the same address as vagrant/vagrant and attach a
-  debugger to vulnserver.exe in C:\vulnserver.
+  debugger to vulnserver.exe in C:\vulnserver. The flag is in C:\ctf\flag.txt, readable by SYSTEM:
+  read it through a shell from your exploit.

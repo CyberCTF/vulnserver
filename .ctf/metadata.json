@@ -1,7 +1,7 @@
 {
   "title": "Vulnserver",
   "description": "A Windows TCP server on port 9999 whose commands each hide a different buffer overflow: a plain stack overflow, SEH overwrites, a tiny buffer that needs an egghunter, and restricted character sets. DEP is off, as in the Windows versions the exercises were written for.",
-  "question": "Exploit a Vulnserver command and get a shell on the machine.",
+  "question": "Exploit a Vulnserver command, get a shell on the machine and read C:\\ctf\\flag.txt.",
   "category": "PWN",
   "difficulty": 3,
   "evidence_kind": "SECRET",
