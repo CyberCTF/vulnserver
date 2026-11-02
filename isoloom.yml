@@ -8,23 +8,27 @@ version: 1
 name: vulnserver
 
 # Given by the CyberCTF launcher: this player's flag. Without it the development flag.
-inputs: [CTF_FLAG_MAIN]
+inputs:
+  CTF_FLAG_MAIN: { description: "This player's flag, written to C:\\ctf\\flag.txt on win01." }
 
 networks:
   lab: { cidr: 10.60.84.0/24 }
 
 machines:
   win01:
+    os: windows-server@2019
     networks: { lab: 10 }
-    services:
-      - { port: 9999, name: vulnserver }
-      - { port: 3389, name: rdp }
+    ports:
+      vulnserver: 9999
+      rdp: 3389
     resources: { cpus: 2, memory_mb: 3072 }
-    inputs: [CTF_FLAG_MAIN]
-    vm:
-      os: windows-server-2019
-      # The player's flag in C:\ctf\flag.txt (Administrators and SYSTEM only), before the playbook.
-      provision: [provision/flag.ps1]
+    # The player's flag is staged for flag.ps1, which writes C:\ctf\flag.txt readable by
+    # Administrators and SYSTEM only, before the playbook runs.
+    files:
+      - { path: 'C:\Windows\Temp\ctf_flag_main', input: CTF_FLAG_MAIN }
+    app:
+      steps:
+        - run: provision/flag.ps1
 
 provision:
   - ansible: provision/main.yml
